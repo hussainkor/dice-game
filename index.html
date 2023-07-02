@@ -382,7 +382,7 @@
             border-radius: 10px;
             padding: 10px;
             top: 160px;
-            color: #fff;
+            color: #FFDD00;
             background: #000;
             text-align: center;
         }
@@ -399,6 +399,7 @@
         .players-attempt-2 h3 {
             font-weight: normal;
             margin-top: 0;
+            font-size: 22px;
         }
 
         .disabled {
@@ -442,6 +443,41 @@
 
         input[type="checkbox"]:checked+.theme-btn-label .check-tag {
             transform: translateX(30px);
+        }
+
+        .player-attempt ul {
+            padding: 0px;
+            margin: 0px;
+        }
+
+        .history-list {
+            max-height: 340px;
+            overflow-y: scroll;
+            overflow-x: hidden;
+        }
+
+        .history-item {
+            font-size: 16px;
+            padding: 8px 0;
+            text-align: center;
+            width: 100%;
+            border-bottom: 1px solid #fff;
+            color: #fff;
+        }
+
+        .history-list::-webkit-scrollbar {
+            width: 2px;
+            border-radius: 4px;
+        }
+
+        .history-list::-webkit-scrollbar-thumb {
+            background-color: #000;
+            border-radius: 4px;
+        }
+
+        .history-list::-webkit-scrollbar-track {
+            background-color: #000;
+            border-radius: 4px;
         }
     </style>
     <!-- FireWorks CSS -->
@@ -654,18 +690,16 @@
         </div>
     </div>
     <!-- Players attempt and their numbers -->
-    <!-- <div class="player-attempt players-attempt-1">
-        <h3>Player Name</h3>
-        <ul>
-            <li class="attempt-count"></li>
+    <div class="player-attempt players-attempt-1">
+        <h3>Player 1</h3>
+        <ul class="history-list" id="historyList0">
         </ul>
     </div>
     <div class="player-attempt players-attempt-2">
-        <h3>Player Name</h3>
-        <ul>
-            <li class="attempt-count"></li>
+        <h3>Player 2</h3>
+        <ul class="history-list" id="historyList1">
         </ul>
-    </div> -->
+    </div>
     <div class="theme-btn-ctn">
         <input type="checkbox" id="checkBtn" class="theme-btn">
         <label class="theme-btn-label" for="checkBtn">
@@ -699,9 +733,11 @@
         const audio = new Audio('images/roll.mp3');
         const themeButton = document.querySelector("#checkBtn");
 
-        // const loggins = document.querySelector('.log');
-        // const playerAttempt = document.querySelector('.player-attempt ul');
-        // const attemptCount = document.querySelector('.attempt-count')
+        const attempPlayer1 = document.querySelector('.players-attempt-1 h3');
+        const attempPlayer2 = document.querySelector('.players-attempt-2 h3');
+        const historyListElement0 = document.querySelector("#historyList0");
+        const historyListElement1 = document.querySelector("#historyList1");
+
 
         const name1 = document.getElementById('player1');
         const name2 = document.getElementById('player2');
@@ -709,6 +745,7 @@
 
         let scores, currentScore, activePlayer, playing, attempts, players
         players = [];
+        let counts = 0;
         // Reset setting function
         const init = function () {
             scores = [0, 0];
@@ -732,8 +769,32 @@
 
             rollBtn.classList.remove('hidden');
             holdBtn.classList.remove('hidden');
+
+            clearHistory();
         }
         init();
+        // Player Attempts
+        const attemptsPlayer = function (rndm) {
+            const listItem = document.createElement("div");
+            listItem.classList.add("history-item");
+
+            if (activePlayer === 0) {
+                listItem.append(`You rolled \u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0`, rndm);
+                document.querySelector(`#historyList${[activePlayer]}`).append(listItem);
+            } else {
+                listItem.append(`You rolled \u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0`, rndm);
+                document.querySelector(`#historyList${[activePlayer]}`).append(listItem);
+            }
+        }
+        // Remove Player Attemps
+        function clearHistory() {
+            while (historyListElement0.firstChild) {
+                historyListElement0.removeChild(historyListElement0.firstChild);
+            }
+            while (historyListElement1.firstChild) {
+                historyListElement1.removeChild(historyListElement1.firstChild)
+            }
+        }
         // Switch player function
         const switchPlayer = function () {
             document.getElementById(`hold-score-${activePlayer}`).innerHTML = 0;
@@ -755,6 +816,7 @@
                 dicedRound();
                 const random = Math.trunc(Math.random() * 6) + 1;
                 audio.play();
+                counts++
                 rollBtn.classList.add('disabled');
                 setTimeout(() => {
                     animatedDice.classList.remove("roll");
@@ -770,14 +832,8 @@
                     else {
                         switchPlayer()
                     }
-
-
                 }, 900);
-                if (activePlayer === 0) {
-                    console.log(`player 1` + " rolled", attempts[activePlayer], currentScore);
-                } else {
-                    console.log(`player 2` + " rolled", attempts[activePlayer], currentScore);
-                }
+                attemptsPlayer(random);
             }
         })
         // Hold Gain Dice Score 
@@ -828,10 +884,11 @@
                 players.push(name1.value);
                 if (typeof players[0] === 'string') {
                     playerName1.textContent = players[0];
+                    attempPlayer1.textContent = players[0];
                 }
                 players.push(name2.value);
                 if (typeof players[1] === 'string') {
-                    playerName2.textContent = players[1];
+                    playerName2.textContent = attempPlayer2.textContent = players[1];
                 }
                 modalClose();
             } else {
