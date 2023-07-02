@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dice Game | 2 player</title>
+    <link id="Link"
+        href="https://static.vecteezy.com/system/resources/thumbnails/006/467/455/small_2x/drum-isometric-icon-design-event-celebration-accessory-vector.jpg"
+        rel="icon" type="image/x-icon" />
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* --primary-color: #1e2a3a;
+            --secondary-color: #607890;
+            --accent-color: #f9bc60; */
+            --background-color: #aa2f1d;
+            --box-shadow-color: 30, 42, 58;
+            --toggle-bg: #fff;
+            --toggle-icon: #222;
+        }
+
+        .dark-theme {
+            /* --primary-color: #f5f5f5;
+            --secondary-color: #607890;
+            --accent-color: #f9bc60; */
+            --background-color: #1e2a3a;
+            --box-shadow-color: 245, 245, 245;
+            --toggle-bg: #00b7ff;
+            --toggle-icon: #fff;
+        }
+
+        body {
+            /* background-image: linear-gradient(to left, #aa2f1d, #a50035, #95004c, #770063, #480974); */
+            background: var(--background-color);
+            margin: 0px;
+            padding: 0 0px;
+            font-family: 'Oswald', sans-serif;
+            overflow: hidden;
+        }
+
+        .player-score {
+            margin: auto;
+            max-width: 750px;
+            border-radius: 10px;
+            margin-top: 50px;
+            position: relative;
+            box-shadow: rgba(0, 0, 0, 0.55) 0px 5px 25px;
+        }
+
+        .players {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: rgba(255, 255, 255, 0.45);
+            backdrop-filter: blur(200px);
+            filter: blur();
+            border-radius: 10px;
+        }
+
+        .player-0,
+        .player-1 {
+            flex: 1;
+            padding: 50px 20px;
+            text-align: center;
+            transition: all 0.75s;
+        }
+
+        .player-0 {
+            border-radius: 10px 0 0 10px;
+        }
+
+        .player-1 {
+            border-radius: 0 10px 10px 0;
+        }
+
+        .player-name {
+            font-size: 25px;
+            margin-bottom: 15px;
+        }
+
+        #current-0,
+        #current-1 {
+            color: #F34949;
+            font-size: 55px;
+            text-shadow: 2px 0 #fff, -2px 0 #fff, 0 2px #fff, 0 -2px #fff,
+                1px 1px #fff, -1px -1px #fff, 1px -1px #fff, -1px 1px #fff;
+        }
+
+        .button-control {
+            position: absolute;
+            top: 0px;
+            left: 0;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            text-align: center;
+            z-index: 5;
+        }
+
+        .roll-btn,
+        .hold-btn,
+        .reset-btn,
+        .submit-btn {
+            margin-top: 20px;
+            padding: 10px 15px;
+            cursor: pointer;
+            border: none;
+            border-radius: 25px;
+            color: #000;
+            width: 120px;
+            margin: auto;
+            font-weight: 600;
+            background: #fff;
+            box-shadow: rgba(0, 0, 0, 0.15) 0px 5px 15px 0px;
+            transition: all 0.1s ease;
+        }
+
+        .roll-btn:active,
+        .hold-btn:active,
+        .reset-btn:active,
+        .submit-btn:active {
+            transform: translate(0, 2px);
+        }
+
+        .roll-btn {
+            width: 120px;
+            margin-top: 95px;
+        }
+
+        .svg-dice {
+            float: left;
+            fill: #C1B681;
+            font-size: 15px;
+        }
+
+        .hold-btn {
+            width: 90px;
+            margin-top: 20px;
+        }
+
+        .svg-hold {
+            float: left;
+            fill: #3251FF;
+            font-size: 15px;
+        }
+
+        .reset-btn {
+            width: 120px;
+            margin-top: 30px;
+        }
+
+        .svg-refresh {
+            fill: red;
+            font-size: 15px;
+            margin-right: 4px;
+            float: left;
+        }
+
+        .submit-btn {
+            background: #FF6E46;
+            color: #fff;
+            margin-top: 20px;
+        }
+
+        .random-box {
+            margin: auto;
+            width: 70px;
+            height: 70px;
+            text-align: center;
+            margin-top: 48px;
+        }
+
+        .random-number {
+            width: 70px;
+            height: 70px;
+            background: #fff;
+            box-shadow: rgba(0, 0, 0, 0.2) 0px 12px 28px 0px, rgba(0, 0, 0, 0.1) 0px 2px 4px 0px, rgba(255, 255, 255, 0.05) 0px 0px 0px 1px inset;
+        }
+
+        .animated-dice {
+            width: 70px;
+            height: 70px;
+            font-size: 70px;
+            line-height: 61px;
+            border: none;
+        }
+
+        .winner-message {
+            position: absolute;
+            z-index: 12;
+            top: 70px;
+            left: 33%;
+            text-align: center;
+            margin: auto;
+            width: 32%;
+            margin-top: 48px;
+            font-size: 16px;
+            font-weight: 400;
+            color: #000;
+            padding: 10px 2%;
+            border-radius: 0px;
+            background: #fff;
+            /* height: 50px; */
+            box-shadow: rgba(0, 0, 0, 0.2) 0px 12px 28px 0px, rgba(0, 0, 0, 0.1) 0px 2px 4px 0px, rgba(255, 255, 255, 0.05) 0px 0px 0px 1px inset;
+        }
+
+        .dice-image {
+            width: 50px;
+            padding-top: 9px;
+        }
+
+        .player-0.active-toggle {
+            background-color: rgba(255, 255, 255, 0.7);
+        }
+
+        .player-1.active-toggle {
+            background-color: rgba(255, 255, 255, 0.7);
+        }
+
+        .winner-bg {
+            background: #000;
+        }
+
+        .winner-bg .player-name {
+            color: #EFF3F4;
+        }
+
+        .instruction {
+            margin: auto;
+            text-align: center;
+            color: #fff;
+        }
+
+        .instruction h2 {
+            font-size: 35px;
+            letter-spacing: 1px;
+            margin-bottom: 1px;
+            font-weight: 400;
+        }
+
+        .instruction p {
+            margin-top: 10px;
+        }
+
+        .hold-score {
+            margin-top: 15px;
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .hold-score div {
+            text-align: center;
+        }
+
+        .game-center-box {
+            height: 80px;
+            margin-top: 30px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .modal {
+            position: absolute;
+            width: 40%;
+            margin-top: 80px;
+            left: 30%;
+            background: #fff;
+            border-radius: 10px;
+            z-index: 10;
+            padding-bottom: 15px;
+        }
+
+        .modal-trans-bg {
+            position: absolute;
+            width: 100%;
+            height: 100vh;
+            left: 0px;
+            top: 0px;
+            z-index: 9;
+            background: rgba(0, 0, 0, 0.9);
+        }
+
+        .box-spacing h2 {
+            text-align: center;
+            font-size: 26px;
+            color: #FF805A;
+            margin-bottom: 10px;
+        }
+
+        .box-spacing h3 {
+            text-align: center;
+            color: #333;
+            margin-top: 5px;
+            margin-bottom: 0px;
+        }
+
+        .player-details {
+            display: flex;
+            flex-direction: column;
+            padding: 5px 25px;
+            gap: 5px;
+        }
+
+        .player-details label {
+            margin-top: 15px;
+        }
+
+        .player-details input {
+            padding: 13px 15px;
+            font-size: 15px;
+            border-radius: 25px;
+            background: #EFF3F4;
+            border: none;
+        }
+
+        .modal a {
+            text-decoration: none;
+        }
+
+        .close-modal {
+            position: absolute;
+            fill: #F34949;
+            top: 10px;
+            right: 10px;
+            font-size: 27px;
+            cursor: pointer;
+        }
+
+        .alert {
+            color: #FF5C64;
+            font-size: 15px;
+            display: none;
+        }
+
+        .player-0-hold-score,
+        .player-1-hold-score {
+            background: #F34949;
+            border: 1px solid #FFA3A3;
+            padding: 10px 5px;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 15px;
+            font-weight: 100;
+            letter-spacing: 1px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            text-transform: uppercase;
+            gap: 5px;
+            margin: auto;
+            max-width: 120px;
+            margin-top: 90px;
+        }
+
+        #hold-score-0,
+        #hold-score-1 {
+            font-size: 25px;
+        }
+
+        .roll {
+            animation: 1s roll-dice 1;
+        }
+
+        @keyframes roll-dice {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(1500deg);
+            }
+        }
+
+        .players-attempt-1,
+        .players-attempt-2 {
+            width: 160px;
+            height: 400px;
+            position: absolute;
+            border-radius: 10px;
+            padding: 10px;
+            top: 160px;
+            color: #fff;
+            background: #000;
+            text-align: center;
+        }
+
+        .players-attempt-1 {
+            left: 20px;
+        }
+
+        .players-attempt-2 {
+            right: 20px;
+        }
+
+        .players-attempt-1 h3,
+        .players-attempt-2 h3 {
+            font-weight: normal;
+            margin-top: 0;
+        }
+
+        .disabled {
+            pointer-events: none;
+        }
+
+        .theme-btn-ctn {
+            margin-bottom: 3rem;
+            width: 70px;
+            margin: auto;
+            margin-top: 30px;
+        }
+
+        .theme-btn {
+            opacity: 0;
+            position: absolute;
+        }
+
+        .theme-btn-label {
+            /* background-color: var(--background-color); */
+            background: var(--toggle-bg);
+            border-radius: 50px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: start;
+            padding: 0.7rem;
+            font-size: 1.3rem;
+            box-shadow: rgba(var(--box-shadow-color), 0.35) 0px 5px 15px;
+        }
+
+        .theme-btn-label .check-tag {
+            background: var(--toggle-icon);
+            /* background-color: var(--primary-color); */
+            border-radius: 50%;
+            height: 15px;
+            width: 15px;
+            transform: translateX(0px);
+            transition: transform 0.2s linear;
+        }
+
+        input[type="checkbox"]:checked+.theme-btn-label .check-tag {
+            transform: translateX(30px);
+        }
+    </style>
+    <!-- FireWorks CSS -->
+    <style>
+        .fireworks>.before,
+        .fireworks>.after {
+            border-radius: 50%;
+            box-shadow: 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff;
+            height: 9px;
+            width: 9px;
+            animation: 1s bang ease-out infinite backwards, 1s gravity ease-in infinite backwards, 5s position linear infinite backwards;
+            -moz-animation: 1s bang ease-out infinite backwards, 1s gravity ease-in infinite backwards, 5s position linear infinite backwards;
+            -ms-animation: 1s bang ease-out infinite backwards, 1s gravity ease-in infinite backwards, 5s position linear infinite backwards;
+            -o-animation: 1s bang ease-out infinite backwards, 1s gravity ease-in infinite backwards, 5s position linear infinite backwards;
+            -webkit-animation: 1s bang ease-out infinite backwards, 1s gravity ease-in infinite backwards, 5s position linear infinite backwards;
+            position: absolute;
+        }
+
+        .fireworks>.after {
+            animation-delay: 1.25s, 1.25s, 1.25s;
+            -moz-animation-delay: 1.25s, 1.25s, 1.25s;
+            -ms-animation-delay: 1.25s, 1.25s, 1.25s;
+            -o-animation-delay: 1.25s, 1.25s, 1.25s;
+            -webkit-animation-delay: 1.25s, 1.25s, 1.25s;
+            animation-duration: 1.25s, 1.25s, 6.25s;
+            -moz-animation-duration: 1.25s, 1.25s, 6.25s;
+            -ms-animation-duration: 1.25s, 1.25s, 6.25s;
+            -o-animation-duration: 1.25s, 1.25s, 6.25s;
+            -webkit-animation-duration: 1.25s, 1.25s, 6.25s;
+        }
+
+        @-webkit-keyframes bang {
+            to {
+                box-shadow: -60px 8.3333333333px #f2ff00, 143px -268.6666666667px #ff9500, -204px -2.6666666667px #ff00d5, -71px -165.6666666667px #d000ff, 238px -255.6666666667px #ff00c4, 135px -308.6666666667px #ff001e, 97px -35.6666666667px #ff7300, 205px -127.6666666667px #008cff, 55px -129.6666666667px #00ffe1, -231px -36.6666666667px #002bff, -218px 74.3333333333px #2fff00, 207px -82.6666666667px #006fff, -132px -402.6666666667px #0051ff, 60px -165.6666666667px #ff0077, -170px -9.6666666667px #ff00e1, -29px -1.6666666667px #40ff00, 72px -44.6666666667px #ff0400, -201px -297.6666666667px #e600ff, 227px 65.3333333333px #b300ff, 71px -134.6666666667px #0011ff, -79px -54.6666666667px #bb00ff, -100px -317.6666666667px #a2ff00, 20px -62.6666666667px #4400ff, 24px -124.6666666667px #ff0095, 30px -188.6666666667px #48ff00, 117px -176.6666666667px #ff6f00, 38px -23.6666666667px #a200ff, 31px -198.6666666667px #bfff00, -64px -210.6666666667px #001aff, 53px -306.6666666667px #4dff00, -162px 41.3333333333px darkorange, 196px 5.3333333333px #ff0066, -92px -163.6666666667px #00ffcc, 151px -123.6666666667px #d5ff00, -134px -405.6666666667px #1100ff, -16px -101.6666666667px #00b7ff, -141px -109.6666666667px fuchsia, -131px 75.3333333333px #6a00ff, 249px 23.3333333333px #3c00ff, 250px -344.6666666667px #e6ff00, -84px -220.6666666667px #1eff00, 127px 67.3333333333px #c8ff00, 193px -342.6666666667px #00ff44, -96px -11.6666666667px #fffb00, -153px -303.6666666667px #ff001e, -61px -306.6666666667px #9500ff, 66px -73.6666666667px #f2ff00, 61px -28.6666666667px #0077ff, 143px -191.6666666667px #ff0080, -74px -114.6666666667px #0091ff, -42px -412.6666666667px #002bff, 248px -110.6666666667px yellow, 47px -363.6666666667px #0099ff, 12px -95.6666666667px #00ff2b, -50px -74.6666666667px #6600ff, -81px 66.3333333333px #ff00e1, 211px -203.6666666667px #00ffe6, -187px -155.6666666667px #3300ff, 218px 62.3333333333px #d5ff00, 243px -128.6666666667px #ff2200, 225px -147.6666666667px darkorange;
+            }
+        }
+
+        @keyframes bang {
+            to {
+                box-shadow: -60px 8.3333333333px #f2ff00, 143px -268.6666666667px #ff9500, -204px -2.6666666667px #ff00d5, -71px -165.6666666667px #d000ff, 238px -255.6666666667px #ff00c4, 135px -308.6666666667px #ff001e, 97px -35.6666666667px #ff7300, 205px -127.6666666667px #008cff, 55px -129.6666666667px #00ffe1, -231px -36.6666666667px #002bff, -218px 74.3333333333px #2fff00, 207px -82.6666666667px #006fff, -132px -402.6666666667px #0051ff, 60px -165.6666666667px #ff0077, -170px -9.6666666667px #ff00e1, -29px -1.6666666667px #40ff00, 72px -44.6666666667px #ff0400, -201px -297.6666666667px #e600ff, 227px 65.3333333333px #b300ff, 71px -134.6666666667px #0011ff, -79px -54.6666666667px #bb00ff, -100px -317.6666666667px #a2ff00, 20px -62.6666666667px #4400ff, 24px -124.6666666667px #ff0095, 30px -188.6666666667px #48ff00, 117px -176.6666666667px #ff6f00, 38px -23.6666666667px #a200ff, 31px -198.6666666667px #bfff00, -64px -210.6666666667px #001aff, 53px -306.6666666667px #4dff00, -162px 41.3333333333px darkorange, 196px 5.3333333333px #ff0066, -92px -163.6666666667px #00ffcc, 151px -123.6666666667px #d5ff00, -134px -405.6666666667px #1100ff, -16px -101.6666666667px #00b7ff, -141px -109.6666666667px fuchsia, -131px 75.3333333333px #6a00ff, 249px 23.3333333333px #3c00ff, 250px -344.6666666667px #e6ff00, -84px -220.6666666667px #1eff00, 127px 67.3333333333px #c8ff00, 193px -342.6666666667px #00ff44, -96px -11.6666666667px #fffb00, -153px -303.6666666667px #ff001e, -61px -306.6666666667px #9500ff, 66px -73.6666666667px #f2ff00, 61px -28.6666666667px #0077ff, 143px -191.6666666667px #ff0080, -74px -114.6666666667px #0091ff, -42px -412.6666666667px #002bff, 248px -110.6666666667px yellow, 47px -363.6666666667px #0099ff, 12px -95.6666666667px #00ff2b, -50px -74.6666666667px #6600ff, -81px 66.3333333333px #ff00e1, 211px -203.6666666667px #00ffe6, -187px -155.6666666667px #3300ff, 218px 62.3333333333px #d5ff00, 243px -128.6666666667px #ff2200, 225px -147.6666666667px darkorange;
+            }
+        }
+
+        @-webkit-keyframes gravity {
+            to {
+                transform: translateY(200px);
+                -webkit-transform: translateY(200px);
+                opacity: 0;
+            }
+        }
+
+        @keyframes gravity {
+            to {
+                transform: translateY(200px);
+                -webkit-transform: translateY(200px);
+                opacity: 0;
+            }
+        }
+
+        @-webkit-keyframes position {
+
+            0%,
+            19.9% {
+                margin-top: 10%;
+                margin-left: 40%;
+            }
+
+            20%,
+            39.9% {
+                margin-top: 40%;
+                margin-left: 30%;
+            }
+
+            40%,
+            59.9% {
+                margin-top: 20%;
+                margin-left: 70%;
+            }
+
+            60%,
+            79.9% {
+                margin-top: 30%;
+                margin-left: 20%;
+            }
+
+            80%,
+            99.9% {
+                margin-top: 30%;
+                margin-left: 80%;
+            }
+        }
+
+        @keyframes position {
+
+            0%,
+            19.9% {
+                margin-top: 10%;
+                margin-left: 40%;
+            }
+
+            20%,
+            39.9% {
+                margin-top: 40%;
+                margin-left: 30%;
+            }
+
+            40%,
+            59.9% {
+                margin-top: 20%;
+                margin-left: 70%;
+            }
+
+            60%,
+            79.9% {
+                margin-top: 30%;
+                margin-left: 20%;
+            }
+
+            80%,
+            99.9% {
+                margin-top: 30%;
+                margin-left: 80%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="buttonsContainer"></div>
+    <!-- Fireworks -->
+    <div class="fireworks hidden">
+        <div class="before"></div>
+        <div class="after"></div>
+    </div>
+    <!-- Player Modal -->
+    <div class="modal-trans-bg"></div>
+    <div class="modal">
+        <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512" class="close-modal">
+            <path
+                d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM175 175c9.4-9.4 24.6-9.4 33.9 0l47 47 47-47c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9l-47 47 47 47c9.4 9.4 9.4 24.6 0 33.9s-24.6 9.4-33.9 0l-47-47-47 47c-9.4 9.4-24.6 9.4-33.9 0s-9.4-24.6 0-33.9l47-47-47-47c-9.4-9.4-9.4-24.6 0-33.9z" />
+        </svg>
+        <div class="box-spacing">
+            <h2>Play Dice Roll Game</h2>
+            <h3>Enter Player Name</h3>
+            <div class="player-details">
+                <span class="alert">Enter player name</span>
+                <label>Player1 Name</label>
+                <input type="text" class="player-field" placeholder="player name" id="player1">
+                <label>Player2 Name</label>
+                <input type="text" class="player-field" placeholder="player name" id="player2">
+                <button class="submit-btn">Submit</button>
+            </div>
+        </div>
+    </div>
+    <!-- Instruction -->
+    <div class="instruction">
+        <h2>It's a two players Roll Dice Game</h2>
+        <p>On rolls if dice number comes 1 then player automatically will switched (Note: It's a 100 point game)</p>
+    </div>
+    <!-- DICE GAME BOX -->
+    <div class="player-score">
+        <div class="best-attempt-win"></div>
+        <div class="players">
+            <div class="winner-message hidden"></div>
+            <div class="player-0">
+                <div class="player-name"><span class="player-name-0">Player 1</span> Score</div>
+                <span id="current-0">0</span>
+                <div class="player-0-hold-score">Current
+                    <span id="hold-score-0">0</span>
+                </div>
+            </div>
+            <div class="player-1 active-toggle">
+                <div class="player-name"><span class="player-name-1">Player 2</span> Score</div>
+                <span id="current-1">0</span>
+                <div class="player-1-hold-score">Current
+                    <span id="hold-score-1">0</span>
+                </div>
+            </div>
+            <div class="button-control">
+                <button class="reset-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512" class="svg-refresh">
+                        <path
+                            d="M105.1 202.6c7.7-21.8 20.2-42.3 37.8-59.8c62.5-62.5 163.8-62.5 226.3 0L386.3 160H336c-17.7 0-32 14.3-32 32s14.3 32 32 32H463.5c0 0 0 0 0 0h.4c17.7 0 32-14.3 32-32V64c0-17.7-14.3-32-32-32s-32 14.3-32 32v51.2L414.4 97.6c-87.5-87.5-229.3-87.5-316.8 0C73.2 122 55.6 150.7 44.8 181.4c-5.9 16.7 2.9 34.9 19.5 40.8s34.9-2.9 40.8-19.5zM39 289.3c-5 1.5-9.8 4.2-13.7 8.2c-4 4-6.7 8.8-8.1 14c-.3 1.2-.6 2.5-.8 3.8c-.3 1.7-.4 3.4-.4 5.1V448c0 17.7 14.3 32 32 32s32-14.3 32-32V396.9l17.6 17.5 0 0c87.5 87.4 229.3 87.4 316.7 0c24.4-24.4 42.1-53.1 52.9-83.7c5.9-16.7-2.9-34.9-19.5-40.8s-34.9 2.9-40.8 19.5c-7.7 21.8-20.2 42.3-37.8 59.8c-62.5 62.5-163.8 62.5-226.3 0l-.1-.1L125.6 352H176c17.7 0 32-14.3 32-32s-14.3-32-32-32H48.4c-1.6 0-3.2 .1-4.8 .3s-3.1 .5-4.6 1z" />
+                    </svg>
+                    New Game
+                </button>
+                <div class="random-box">
+                    <div class="animated-dice">
+                        🎲
+                    </div>
+                    <div class="random-number hidden">
+                        <img src="images/dice-1.png" alt="dice" class="dice-image">
+                    </div>
+                </div>
+                <button class="roll-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 640 512" class="svg-dice">
+                        <path
+                            d="M274.9 34.3c-28.1-28.1-73.7-28.1-101.8 0L34.3 173.1c-28.1 28.1-28.1 73.7 0 101.8L173.1 413.7c28.1 28.1 73.7 28.1 101.8 0L413.7 274.9c28.1-28.1 28.1-73.7 0-101.8L274.9 34.3zM200 224a24 24 0 1 1 48 0 24 24 0 1 1 -48 0zM96 200a24 24 0 1 1 0 48 24 24 0 1 1 0-48zM224 376a24 24 0 1 1 0-48 24 24 0 1 1 0 48zM352 200a24 24 0 1 1 0 48 24 24 0 1 1 0-48zM224 120a24 24 0 1 1 0-48 24 24 0 1 1 0 48zm96 328c0 35.3 28.7 64 64 64H576c35.3 0 64-28.7 64-64V256c0-35.3-28.7-64-64-64H461.7c11.6 36 3.1 77-25.4 105.5L320 413.8V448zM480 328a24 24 0 1 1 0 48 24 24 0 1 1 0-48z" />
+                    </svg>
+                    Roll Dice
+                </button>
+                <button class="hold-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 576 512" class="svg-hold">
+                        <path
+                            d="M148 76.6C148 34.3 182.3 0 224.6 0c20.3 0 39.8 8.1 54.1 22.4l9.3 9.3 9.3-9.3C311.6 8.1 331.1 0 351.4 0C393.7 0 428 34.3 428 76.6c0 20.3-8.1 39.8-22.4 54.1L302.1 234.1c-7.8 7.8-20.5 7.8-28.3 0L170.4 130.7C156.1 116.4 148 96.9 148 76.6zM568.2 336.3c13.1 17.8 9.3 42.8-8.5 55.9L433.1 485.5c-23.4 17.2-51.6 26.5-80.7 26.5H192 32c-17.7 0-32-14.3-32-32V416c0-17.7 14.3-32 32-32H68.8l44.9-36c22.7-18.2 50.9-28 80-28H272h16 64c17.7 0 32 14.3 32 32s-14.3 32-32 32H288 272c-8.8 0-16 7.2-16 16s7.2 16 16 16H392.6l119.7-88.2c17.8-13.1 42.8-9.3 55.9 8.5zM193.6 384l0 0-.9 0c.3 0 .6 0 .9 0z" />
+                    </svg>
+                    Hold
+                </button>
+            </div>
+        </div>
+    </div>
+    <!-- Players attempt and their numbers -->
+    <!-- <div class="player-attempt players-attempt-1">
+        <h3>Player Name</h3>
+        <ul>
+            <li class="attempt-count"></li>
+        </ul>
+    </div>
+    <div class="player-attempt players-attempt-2">
+        <h3>Player Name</h3>
+        <ul>
+            <li class="attempt-count"></li>
+        </ul>
+    </div> -->
+    <div class="theme-btn-ctn">
+        <input type="checkbox" id="checkBtn" class="theme-btn">
+        <label class="theme-btn-label" for="checkBtn">
+            <div class="check-tag"></div>
+        </label>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script>
+        'use strict';
+        const rollBtn = document.querySelector('.roll-btn');
+        const holdBtn = document.querySelector('.hold-btn');
+        const resetBtn = document.querySelector('.reset-btn');
+        const submitBtn = document.querySelector('.submit-btn');
+        const inputModal = document.querySelector('.modal');
+        const closeModalBtn = document.querySelector('.close-modal');
+        const transBgModal = document.querySelector('.modal-trans-bg');
+        const playerField = document.querySelectorAll('.player-field');
+        const playerName1 = document.querySelector('.player-name-0');
+        const playerName2 = document.querySelector('.player-name-1');
+        const randomNmbrDisplay = document.querySelector('.random-number');
+        const winnerMessage = document.querySelector('.winner-message');
+        const player0 = document.querySelector('.player-0');
+        const player1 = document.querySelector('.player-1');
+        const playerScore1 = document.getElementById('hold-score-0');
+        const playerScore2 = document.getElementById('hold-score-1');
+        const curScorePl1 = document.getElementById('current-0');
+        const curScorePl2 = document.getElementById('current-1');
+        const diceImage = document.querySelector('.dice-image');
+        const fireWorks = document.querySelector('.fireworks');
+        const animatedDice = document.querySelector('.animated-dice');
+        const audio = new Audio('images/roll.mp3');
+        const themeButton = document.querySelector("#checkBtn");
+
+        // const loggins = document.querySelector('.log');
+        // const playerAttempt = document.querySelector('.player-attempt ul');
+        // const attemptCount = document.querySelector('.attempt-count')
+
+        const name1 = document.getElementById('player1');
+        const name2 = document.getElementById('player2');
+        const alert = document.querySelector('.alert');
+
+        let scores, currentScore, activePlayer, playing, attempts, players
+        players = [];
+        // Reset setting function
+        const init = function () {
+            scores = [0, 0];
+            attempts = [0, 0];
+            currentScore = 0;
+            activePlayer = 0;
+            playing = true;
+
+            player0.classList.add('active-toggle');
+            player1.classList.remove('active-toggle');
+            player0.classList.remove('winner-bg');
+            player1.classList.remove('winner-bg');
+            winnerMessage.classList.remove('hidden');
+            winnerMessage.innerHTML = 'Start Dice Game by clicking Roll Dice button';
+            randomNmbrDisplay.classList.add('hidden');
+            fireWorks.classList.add('hidden');
+            animatedDice.style.display = 'none';
+
+            playerScore1.textContent = playerScore2.textContent = 0;
+            curScorePl1.textContent = curScorePl2.textContent = 0;
+
+            rollBtn.classList.remove('hidden');
+            holdBtn.classList.remove('hidden');
+        }
+        init();
+        // Switch player function
+        const switchPlayer = function () {
+            document.getElementById(`hold-score-${activePlayer}`).innerHTML = 0;
+            currentScore = 0;
+            activePlayer = activePlayer === 0 ? 1 : 0;
+            player0.classList.toggle('active-toggle');
+            player1.classList.toggle('active-toggle');
+        }
+        // Animated Rolling Dice function
+        const dicedRound = function () {
+            animatedDice.style.display = 'block';
+            animatedDice.classList.add("roll");
+            randomNmbrDisplay.classList.add('hidden');
+        }
+        // Rolling Dice
+        rollBtn.addEventListener('click', function () {
+            if (playing) {
+                winnerMessage.classList.add('hidden');
+                dicedRound();
+                const random = Math.trunc(Math.random() * 6) + 1;
+                audio.play();
+                rollBtn.classList.add('disabled');
+                setTimeout(() => {
+                    animatedDice.classList.remove("roll");
+                    rollBtn.classList.remove('disabled');
+                    animatedDice.style.display = 'none';
+                    randomNmbrDisplay.classList.remove('hidden');
+                    diceImage.src = `images/dice-${random}.png`;
+                    attempts[activePlayer]++;
+                    if (random !== 1) {
+                        currentScore += random;
+                        document.getElementById(`hold-score-${activePlayer}`).innerHTML = currentScore;
+                    }
+                    else {
+                        switchPlayer()
+                    }
+
+
+                }, 900);
+                if (activePlayer === 0) {
+                    console.log(`player 1` + " rolled", attempts[activePlayer], currentScore);
+                } else {
+                    console.log(`player 2` + " rolled", attempts[activePlayer], currentScore);
+                }
+            }
+        })
+        // Hold Gain Dice Score 
+        holdBtn.addEventListener('click', function () {
+            if (playing) {
+                scores[activePlayer] += currentScore;
+                document.getElementById(`current-${activePlayer}`).innerHTML = scores[activePlayer];
+                if (scores[activePlayer] >= 20) {
+                    playing = false;
+                    fireWorks.classList.remove('hidden');
+                    randomNmbrDisplay.classList.add('hidden');
+                    winnerMessage.classList.remove('hidden');
+                    rollBtn.classList.add('hidden');
+                    holdBtn.classList.add('hidden');
+                    document.querySelector(`.player-${activePlayer}`).classList.remove('active-toggle');
+                    document.querySelector(`.player-${activePlayer}`).classList.add('winner-bg');
+                    if (players.length) {
+                        winnerMessage.textContent = `Yay! ${players[activePlayer]} won the game in ${attempts[activePlayer]} attempts`;
+                    } else {
+                        winnerMessage.innerHTML = `Yay! Player ${activePlayer === 0 ? 1 : 2} won the game in ${attempts[activePlayer]} attempts`;
+                    }
+                }
+                else {
+                    switchPlayer()
+                }
+            }
+        })
+        // Reset Dice Setting
+        resetBtn.addEventListener('click', init);
+        // Alert Input Field
+        const alertInputMsg = function () {
+            alert.style.display = 'block';
+            const stopTimeOut = setTimeout(() => {
+                alert.style.display = 'none';
+            }, "2000");
+            function clearMessage() {
+                clearTimeout(stopTimeOut);
+            }
+        }
+        // Modal Close Function
+        const modalClose = function () {
+            transBgModal.classList.add('hidden');
+            inputModal.classList.add('hidden');
+        }
+        // Saving players Name
+        submitBtn.addEventListener('click', function () {
+            if (name1.value && name2.value) {
+                players.push(name1.value);
+                if (typeof players[0] === 'string') {
+                    playerName1.textContent = players[0];
+                }
+                players.push(name2.value);
+                if (typeof players[1] === 'string') {
+                    playerName2.textContent = players[1];
+                }
+                modalClose();
+            } else {
+                alertInputMsg();
+            }
+        })
+        // Modal Close Button
+        closeModalBtn.addEventListener('click', modalClose);
+        // Dark Mode function
+        const darkMode = function () {
+            document.documentElement.classList.toggle('dark-theme');
+        }
+        themeButton.addEventListener('click', darkMode)
+    </script>
+</body>
+
+</html>
