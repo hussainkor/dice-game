@@ -819,6 +819,7 @@
                 counts++
                 rollBtn.classList.add('disabled');
                 setTimeout(() => {
+                    attemptsPlayer(random);
                     animatedDice.classList.remove("roll");
                     rollBtn.classList.remove('disabled');
                     animatedDice.style.display = 'none';
@@ -832,8 +833,7 @@
                     else {
                         switchPlayer()
                     }
-                }, 900);
-                attemptsPlayer(random);
+                }, 900);                
             }
         })
         // Hold Gain Dice Score 
